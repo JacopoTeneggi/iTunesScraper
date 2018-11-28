@@ -1,0 +1,10 @@
+node_modules/
+iTunesIDs.csv
+reports/
+db/credentials.json
+db/OLD/
+db/createPodcastsTable.sql
+logs/
+test/
+snapshots/
+iTunesIDs.csv
