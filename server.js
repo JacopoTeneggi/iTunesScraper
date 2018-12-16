@@ -17,8 +17,16 @@ app.use(express.static('./public'));
 app.set('view engine', 'pug');
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('stats');
 });
+
+app.get('/stats', (req, res) => {
+    res.render('stats');
+});
+
+app.get('/analyzer', (req, res) => {
+    res.render('analyzer');
+})
 
 app.post('/analyzer', (req, res) => {
     const { statusCode, text } = analyze();

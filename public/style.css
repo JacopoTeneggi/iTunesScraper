@@ -28,3 +28,8 @@ body {
 .mdc-linear-progress__bar-inner {
     background-color: #285D91;
 }
+
+#tab {
+    font-family: 'Poppins', 'Roboto', sans-serif;
+    color: #ffffff;
+}

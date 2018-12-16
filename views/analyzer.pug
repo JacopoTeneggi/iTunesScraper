@@ -3,6 +3,9 @@ extends layout.pug
 block styles
     link(href='/style.css', type='text/css', rel='stylesheet')
 
+block scripts
+    script(src='/index.js', type='text/javascript')
+
 block tab
     .mdc-tab-bar(role='tablist')
         .mdc-tab-scroller__scroll-area
@@ -13,24 +16,19 @@ block tab
                         span.mdc-tab-indicator.mdc-tab-indicator--active
                             span.mdc-tab-indicator__content.mdc-tab-indicator__content-underline
                         span.mdc-tab__ripple
-                    a.mdc-button.mdc-tab.mdc-tab--active(role='tab', arias-selected='true', tabindex=0, href='/top10')
+                    a.mdc-button.mdc-tab.mdc-tab(role='tab', arias-selected='true', tabindex=-1, href='/top10')
                         span.mdc-tab-content
                             span.mdc-tab__text-label#tab Top 10
                         span.mdc-tab-indicator.mdc-tab-indicator--active
                             span.mdc-tab-indicator__content.mdc-tab-indicator__content-underline
                         span.mdc-tab__ripple
-                    a.mdc-button.mdc-tab.mdc-tab(role='tab', aria-selected='true', tabindex=-1, href='/analyzer')
+                    a.mdc-button.mdc-tab.mdc-tab--active(role='tab', aria-selected='true', tabindex=0, href='/analyzer')
                         span.mdc-tab-content
                             span.mdc-tab__text-label#tab Analyzer
                         span.mdc-tab-indicator.mdc-tab-indicator--active
                             span.mdc-tab-indicator__content.mdc-tab-indicator__content-underline
                         span.mdc-tab__ripple
-                    
-block content     
-    ul(class='mdc-list mdc-list--two-line', aria-orientation='vertical')
-        -
-        each item in results
-            li(class='mdc-list-item')
-                span(class='mdc-list-item__text')
-                    span(class='mdc-list-item__primary-text') !{item.hostingvendors || 'UNKNOWN'}
-                    span(class='mdc-list-item__secondary-text') !{item.count}
+
+block content
+    ul.mdc-list#updates(aria-orientation='vertical')        
+    
