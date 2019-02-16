@@ -2,10 +2,10 @@
 
 const express = require('express');
 
-const sse = require('./lib/sse');
-const logger = require('./config/winston').logger;
-const analyze = require('./lib/analyzer').analyze;
-const db = require('./db');
+const sse = require('../lib/sse');
+const logger = require('../config/winston').logger;
+const analyze = require('../lib/analyzer').analyze;
+const db = require('../db');
 
 const app = express();
 

@@ -14,7 +14,7 @@ NOTES:
 
 ### Analyzer
 
-![See it in action](./public/analyzer.gif)
+![See it in action](./src/public/analyzer.gif)
 
 How does the analysis process work:
 
@@ -28,7 +28,7 @@ How does the analysis process work:
 
 ## Top 10
 
-![See it in action](./public/top10.gif)
+![See it in action](./src/public/top10.gif)
 
 Ironically, this endpoint currently returns every recognised vendor ordered by number of episodes hosted.
 

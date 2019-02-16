@@ -3,7 +3,7 @@
 const { createLogger, transports, format } = require('winston');
 const { combine, timestamp, simple, printf } = format;
 
-const SSETransport = require('./sseTransport');
+const SSETransport = require('../src/util/sseTransport');
 
 const logger = createLogger({
     format: combine(

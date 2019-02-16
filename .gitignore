@@ -7,4 +7,5 @@ db/createPodcastsTable.sql
 logs/
 test/
 snapshots/
+dist/
 iTunesIDs.csv
