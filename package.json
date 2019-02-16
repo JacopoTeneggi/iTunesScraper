@@ -1,7 +1,7 @@
 {
   "name": "itunesscraper",
   "version": "0.0.0",
-  "description": "",
+  "description": "My package",
   "main": "server.js",
   "directories": {
     "lib": "lib"
@@ -37,7 +37,7 @@
   "scripts": {
     "test": "jest",
     "start": "node dist/server.js",
-    "build-dist": "tsc && ts-node copyStaticAssets.ts",
+    "build": "tsc",
     "copy-static-assets": "ts-node copyStaticAssets.ts"
   },
   "repository": {
