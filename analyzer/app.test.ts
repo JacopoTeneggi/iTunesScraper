@@ -1,5 +1,5 @@
 import { request, GenericHTTPResponse } from "./util/request";
-import { lookup, iTunesLookupResponse } from "./lib/iTunesTools";
+import { lookup, iTunesLookupResponse } from "./lib/iTunes";
 import { matchVendor, State } from "./lib/podcast";
 import { query } from "./util/db";
 
@@ -20,12 +20,12 @@ test("iTunes API empty lookup", async () => {
 });
 
 test("Vendor matching", () => {
-    const vendors = require("./public/vendors.json");
+    const vendors = require("./vendors.json");
     expect(matchVendor("http://spreaker.com", Object.keys(vendors), vendors)).toBe("SPREAKER");
 });
 
 test("Unknown vendor matching", () => {
-    const vendors = require("./public/vendors.json");
+    const vendors = require("./vendors.json");
     expect(matchVendor("http://notaknownvendor.io", Object.keys(vendors), vendors)).toBe("UNKNOWN");
 });
 

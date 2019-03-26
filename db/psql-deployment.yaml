@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: itunes-scraper-psql
+  labels:
+    app: itunes-scraper
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 5432
+      targetPort: 5432
+  selector:
+    app: itunes-scraper
+    tier: psql
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: psql-pv-claim
+  labels:
+    app: itunes-scraper
+    tier: psql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: itunes-scraper-psql
+spec:
+  selector:
+    matchLabels:
+      app: itunes-scraper
+      tier: psql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: itunes-scraper
+        tier: psql
+    spec:
+      containers:
+        - image: itunes-scraper-psql
+          imagePullPolicy: Never
+          name: psql
+          env:
+            - name: POSTGRES_USER
+              value: "podcasts"
+            - name: POSTGRES_PASSWORD
+              value: "1234"
+          ports:
+            - containerPort: 5432
+              name: psql
+          volumeMounts:
+            - name: psql-persistent-storage
+              mountPath: /var/lib/psql
+      volumes:
+        - name: psql-persistent-storage
+          persistentVolumeClaim:
+            claimName: psql-pv-claim

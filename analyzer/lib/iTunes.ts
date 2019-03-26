@@ -9,7 +9,8 @@ export interface iTunesLookupResponse extends GenericHTTPResponse {
     }
 }
 
-export const lookup = async (id: number, entity: string = "podcast"): Promise<iTunesLookupResponse> =>
-    request(`${ITUNESAPIURL}/lookup?id=${id}&entity=${entity}`)
+export async function lookup(id: number, entity: string = "podcast"): Promise<iTunesLookupResponse> {
+    return request(`${ITUNESAPIURL}/lookup?id=${id}&entity=${entity}`)
         .then(response => response)
         .catch(err => err);
+}
