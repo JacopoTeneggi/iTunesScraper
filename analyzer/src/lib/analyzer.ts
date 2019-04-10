@@ -1,36 +1,44 @@
 import { Request, Response } from "express";
 
-import * as db from "../util/db";
+import * as psql from "../util/psql";
+import * as mongo from "../util/mongo";
 import * as podcast from "./podcast";
 import { QueryResult } from "pg";
+import v1 from "uuid/v1";
 
 type status = "IDLE" | "RUNNING";
 export let status: status = "IDLE";
 export let podcastCount: number;
-export const batchDim: number = 1;
+export const batchDim: number = 100;
 export let batchCount: number;
 export let progress: number;
 
-export function index(req: Request, res: Response) {
-    db.status()
-        .then(results => res.status(200).send(
-            {
-                status,
-                dbStatus: results,
-                podcastCount,
-                batchDim,
-                batchCount,
-                progress
-            }
-        ))
-        .catch(results => res.status(200).send(results))
+let runID: string;
+
+export function index(_: Request, res: Response) {
+    Promise.all(
+        [psql.status(), mongo.status()]
+            .map(promise => promise
+                .then(_ => ({ status: true }))
+                .catch(reason => ({ status: false, reason }))
+            )
+    ).then(results => (res.status(200).send(
+        {
+            status,
+            dbStatus: results,
+            podcastCount,
+            batchDim,
+            batchCount,
+            progress
+        })))
 }
 
 export function analyze() {
     return new Promise((resolve, reject) => {
         if (status == "RUNNING") reject("Already running");
         status = "RUNNING";
-        db.query("SELECT COUNT(*) FROM podcasts WHERE lastupdate < current_date - 7 or lastupdate is null;")
+        runID = v1();
+        psql.query("SELECT COUNT(*) FROM podcasts WHERE lastupdate < current_date - 7 or lastupdate is null;")
             .then(
                 countQueryResults => {
                     const queryStrings: string[] = [];
@@ -43,7 +51,7 @@ export function analyze() {
                     }
 
                     return queryStrings
-                        .map(querystring => db.query(querystring))
+                        .map(querystring => psql.query(querystring))
                         .reduce(batchReducer, Promise.resolve())
                         .then(_ => {
                             status = "IDLE";
@@ -60,14 +68,15 @@ export function analyze() {
 };
 
 function analyzeBatch(batchQueryResults: QueryResult) {
+    const batchID = v1();
     return Promise.all(
         batchQueryResults.rows
             .map(el => el.itunesid)
             .map(podcast.update)
             .map(promise => promise
-                .then(results => ({ success: true, results }))
-                .catch(reason => ({ success: false, reason }))
-            ));
+                .then(state => stateToRecord(state, true, batchID))
+                .catch(state => stateToRecord(state, false, batchID))
+            ))
 };
 
 async function batchReducer(acc: Promise<void>, batchPromise: Promise<QueryResult>, i: number) {
@@ -75,10 +84,25 @@ async function batchReducer(acc: Promise<void>, batchPromise: Promise<QueryResul
     return batchPromise
         .then(batchQueryResults => {
             return analyzeBatch(batchQueryResults)
-                .then(values => {
-                    console.log(`end batch ${i}`);
-                    return values;
+                .then(records => {
+                    return Promise.all(
+                        records
+                            .map(record => mongo.exec(client => client.db("podcasts").collection("run-data").insertOne(record)))
+                    )
                 })
                 .catch(reason => (console.log(reason)))
         })
-}
+};
+
+function stateToRecord(state: podcast.State, success: boolean, batchID: string) {
+    return {
+        runID,
+        batchID,
+        success,
+        itunesid: state.iTunesID,
+        title: state.title,
+        author: state.author,
+        feedUrl: state.feedUrl,
+        steps: state.steps
+    }
+};

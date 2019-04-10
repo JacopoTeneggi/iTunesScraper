@@ -8,32 +8,30 @@ spec:
   ports:
     - port: 3000
   selector:
-    app: itunes-scraper
-    tier: backend
+    controller-uid: itunes-scraper-analyzer
   type: LoadBalancer
 ---
-apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
-kind: Deployment
+apiVersion: batch/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Job
 metadata:
   name: itunes-scraper-analyzer
   labels:
-    app: itunes-scraper
+    controller-uid: itunes-scraper-analyzer
 spec:
+  manualSelector: true
   selector:
     matchLabels:
-      app: itunes-scraper
-      tier: backend
-  strategy:
-    type: Recreate
+      controller-uid: itunes-scraper-analyzer
   template:
     metadata:
       labels:
-        app: itunes-scraper
-        tier: backend
+        controller-uid: itunes-scraper-analyzer
     spec:
       containers:
-      - image: jacopoteneggi/itunes-scraper:latest
-        name: itunes-scraper-analyzer
+      - name: itunes-scraper-analyzer
+        image: itunes-scraper-analyzer:latest
+        command: ["node", "server.js"]
+        imagePullPolicy: Never
         env:
         - name: POSTGRES_DB_HOST
           value: itunes-scraper-psql
@@ -47,3 +45,4 @@ spec:
         ports:
         - containerPort: 3000
           name: analyzer
+      restartPolicy: Never

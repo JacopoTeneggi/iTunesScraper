@@ -1,7 +1,7 @@
 import { lookup } from "./iTunes";
 import { request } from "../util/request";
 import { arrayToPostgres } from "../util/arrayToPostgre";
-import { query } from "../util/db";
+import { query } from "../util/psql";
 import { RecordOf, Record, List, Map } from "immutable";
 
 import vendors from "../vendors.json";
@@ -127,12 +127,12 @@ export async function loadPodcast(state: State): Promise<State> {
     });
 };
 
-export const update = (iTunesID: number) => 
-[init, extractHostings, loadPodcast].reduce(updateReducer, Promise.resolve({
-    iTunesID: iTunesID,
-    isDown: true,
-    steps: [{ name: "start", endTime: Date.now(), status: "SUCCEDED" }]
-}));
+export const update = (iTunesID: number) =>
+    ([init, extractHostings, loadPodcast].reduce(updateReducer, Promise.resolve({
+        iTunesID: iTunesID,
+        isDown: true,
+        steps: [{ name: "start", endTime: Date.now(), status: "SUCCEDED" }]
+    })));
 
 
 function updateReducer(acc: Promise<State>, step: (state: State) => Promise<State>) {
@@ -155,12 +155,8 @@ function updateReducer(acc: Promise<State>, step: (state: State) => Promise<Stat
                     error: reason
                 }
                 state.steps.push(stepData);
-                return Promise.reject(reason);
+                return Promise.reject(state);
             }))
-        .catch(reason => {
-            console.log(reason);
-            return Promise.reject(reason);
-        })
 };
 
 export function matchVendor(target: string, keys: string[], vendors: any): string {

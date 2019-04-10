@@ -53,7 +53,10 @@ spec:
             - name: POSTGRES_USER
               value: "podcasts"
             - name: POSTGRES_PASSWORD
-              value: "1234"
+              valueFrom:
+                secreKeyRef:
+                  name: psql-password
+                  key: password
           ports:
             - containerPort: 5432
               name: psql

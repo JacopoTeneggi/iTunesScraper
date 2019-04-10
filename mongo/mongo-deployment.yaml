@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: itunes-scraper-mongo
+  labels:
+    app: itunes-scraper
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 27017
+      targetPort: 27017
+  selector:
+    app: itunes-scraper
+    tier: mongo
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pv-claim
+  labels:
+    app: itunes-scraper
+    tier: mongo
+spec: 
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: itunes-scraper-mongo
+spec:
+  selector:
+    matchLabels:
+      app: itunes-scraper
+      tier: mongo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: itunes-scraper
+        tier: mongo
+    spec:
+      containers:
+        - image: itunes-scraper-mongo:latest
+          imagePullPolicy: Never
+          name: mongo
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "podcasts"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-password
+                  key: password
+            - name: MONGO_INITDB_DATABASE
+              value: "podcasts"
+          ports:
+            - containerPort: 27017
+              name: mongo
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /var/lib/mongo
+      volumes:
+        - name: mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongo-pv-claim

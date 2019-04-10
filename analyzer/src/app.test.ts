@@ -1,7 +1,7 @@
 import { request, GenericHTTPResponse } from "./util/request";
 import { lookup, iTunesLookupResponse } from "./lib/iTunes";
 import { matchVendor, State } from "./lib/podcast";
-import { query } from "./util/db";
+import { query } from "./util/psql";
 
 
 test("HTTP simple GET", async () => {

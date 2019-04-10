@@ -1,0 +1,16 @@
+<mat-toolbar color="warn">
+  <mat-toolbar-row>
+    <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" color="primary">
+      <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+    </button>
+    <span>YOUR LOGO</span>
+  </mat-toolbar-row>
+</mat-toolbar>
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #drawer mode="side" opened role="navigation">
+    Sidenav content
+  </mat-sidenav>
+  <mat-sidenav-content>
+    Ciao
+  </mat-sidenav-content>
+</mat-sidenav-container>

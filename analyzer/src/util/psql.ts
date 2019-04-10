@@ -15,8 +15,8 @@ export async function query(text: string, params: any[] = []): Promise<QueryResu
         .catch(err => err)
 };
 
-export async function status(): Promise<Boolean> {
+export async function status() {
     return query("SELECT NOW();")
-        .then(results => results)
-        .catch(err => err)
+        .then(_ => true)
+        .catch(reason => reason)
 }

@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: itunes-scraper-backend
+  labels:
+    app: itunes-scraper
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 3003
+      targetPort: 3003
+  selector:
+    app: itunes-scraper
+    tier: backend
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: itunes-scraper-backend
+spec:
+  selector:
+    matchLabels:
+      app: itunes-scraper
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: itunes-scraper
+        tier: backend
+    spec:
+      containers:
+        - image: itunes-scraper-backend
+          imagePullPolicy: Never
+          name: backend
+          env:
+            - name: MONGO_HOST
+              value: "itunes-scraper-mongo"
+          ports:
+            - containerPort: 3003
+              name: backend
+              

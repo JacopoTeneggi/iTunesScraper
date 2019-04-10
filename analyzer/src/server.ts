@@ -5,8 +5,8 @@ import * as AnalyzerController from "./lib/analyzer";
 const server = app.listen(app.get("port"), () => {
     console.log("START");
     AnalyzerController.analyze()
-        .then(_ => server.close())
-        .catch(_ => server.close());
+        .then(_ => { console.log("STOP"); return server.close(); })
+        .catch(_ => { console.log("STOP"); return server.close(); });
 });
 
 export default server;
