@@ -1,0 +1,9 @@
+.vscode/**/*
+mongo/**/*
+psql/**/*
+analyzer/dist/**/*
+backend/dist/**/*
+web/dist/**/*
+analyzer/node_modules/**/*
+backend/node_modules/**/*
+web/node_modules/**/*

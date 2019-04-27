@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: itunes-scraper-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /web/*
+          backend:
+            serviceName: itunes-scraper-web
+            servicePort: 8080
+        - path: /api/*
+          backend:
+            serviceName: itunes-scraper-backend
+            servicePort: 3003

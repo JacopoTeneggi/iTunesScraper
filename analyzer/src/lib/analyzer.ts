@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import * as psql from "../util/psql";
-import * as mongo from "../util/mongo";
-import * as podcast from "./podcast";
+import * as psql from "../../../lib/psql-connector/index";
+import * as mongo from "../../../lib/mongo-connector/index";
+import * as podcast from "../../../lib/podcast-tools/index";
 import { QueryResult } from "pg";
 import v1 from "uuid/v1";
 
@@ -63,6 +63,7 @@ export function analyze() {
                         })
                 }
             )
+            .catch(reason => reject(reason));
     })
 
 };
@@ -84,13 +85,11 @@ async function batchReducer(acc: Promise<void>, batchPromise: Promise<QueryResul
     return batchPromise
         .then(batchQueryResults => {
             return analyzeBatch(batchQueryResults)
-                .then(records => {
-                    return Promise.all(
-                        records
-                            .map(record => mongo.exec(client => client.db("podcasts").collection("run-data").insertOne(record)))
-                    )
-                })
-                .catch(reason => (console.log(reason)))
+                .then(records => Promise.all(
+                    records
+                        .map(record => mongo.exec(client => client.db("podcasts").collection("run-data").insertOne(record)))
+                ))
+                .catch(reason => console.log(reason))
         })
 };
 
@@ -99,6 +98,7 @@ function stateToRecord(state: podcast.State, success: boolean, batchID: string) 
         runID,
         batchID,
         success,
+        isDown: state.isDown,
         itunesid: state.iTunesID,
         title: state.title,
         author: state.author,

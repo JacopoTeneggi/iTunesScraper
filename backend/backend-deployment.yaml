@@ -12,7 +12,7 @@ spec:
   selector:
     app: itunes-scraper
     tier: backend
-  type: LoadBalancer
+  type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,7 +37,25 @@ spec:
           name: backend
           env:
             - name: MONGO_HOST
-              value: "itunes-scraper-mongo"
+              value: itunes-scraper-mongo
+            - name: MONGO_USER
+              value: podcasts
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: itunes-scraper-secrets
+                  key: mongo-password
+            - name: POSTGRES_DB_HOST
+              value: itunes-scraper-psql
+            - name: POSTGRES_DB_NAME
+              value: podcasts
+            - name: POSTGRES_USER
+              value: podcasts
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: itunes-scraper-secrets
+                  key: psql-password
           ports:
             - containerPort: 3003
               name: backend

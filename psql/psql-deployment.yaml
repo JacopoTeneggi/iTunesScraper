@@ -12,7 +12,7 @@ spec:
   selector:
     app: itunes-scraper
     tier: psql
-  type: LoadBalancer
+  type: NodePort
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -51,12 +51,12 @@ spec:
           name: psql
           env:
             - name: POSTGRES_USER
-              value: "podcasts"
+              value: podcasts
             - name: POSTGRES_PASSWORD
               valueFrom:
-                secreKeyRef:
-                  name: psql-password
-                  key: password
+                secretKeyRef:
+                  name: itunes-scraper-secrets
+                  key: psql-password
           ports:
             - containerPort: 5432
               name: psql

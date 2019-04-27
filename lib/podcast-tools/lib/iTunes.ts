@@ -1,4 +1,4 @@
-import { request, GenericHTTPResponse } from "../util/request";
+import { request, GenericHTTPResponse } from "./request";
 
 export const ITUNESAPIURL: string = "https://itunes.apple.com";
 

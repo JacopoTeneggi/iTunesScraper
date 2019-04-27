@@ -1,0 +1,20 @@
+{
+  "name": "psql-connector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preinstall": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^11.13.4",
+    "@types/pg": "^7.4.14"
+  }
+}

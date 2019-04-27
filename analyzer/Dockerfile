@@ -1,24 +1,22 @@
-FROM node:10.15-alpine as scaffold
+FROM scratch as base
 
-WORKDIR /app
-COPY package*.json ./
-CMD ["npm", "ci"]
+WORKDIR /app/lib
+COPY lib ./
 
-FROM node:10.15.1-alpine as builder
+FROM node:10.15-alpine as node_modules
 
-COPY --from=scaffold /app /app 
-WORKDIR /app
-COPY tsconfig.json .
-CMD ["tsc"]
+COPY --from=base /app /app
+WORKDIR /app/analyzer
+COPY analyzer/package*.json ./
+RUN npm install ci
 
-FROM node:10.15.1-alpine as server
+FROM node:10.15-alpine as builder
 
-COPY --from=builder /app /app
-
-
-WORKDIR /dist
-COPY --from=builder /app/dist /dist
-COPY --from=builder /app/package*.json /dist/
-RUN npm ci
+COPY --from=node_modules /app /app
+WORKDIR /app/analyzer
+COPY analyzer/tsconfig.json .
+COPY analyzer/src ./src/
+RUN npm install typescript -g && tsc
 EXPOSE 3000
-CMD [ "node", "server.js" ]
+WORKDIR /app/analyzer/dist/analyzer/src/
+CMD ["node", "server.js"]

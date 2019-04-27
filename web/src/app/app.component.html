@@ -3,14 +3,24 @@
     <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" color="primary">
       <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
-    <span>YOUR LOGO</span>
+    <span>iTunes</span>
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container class="example-container">
   <mat-sidenav #drawer mode="side" opened role="navigation">
-    Sidenav content
+    <mat-list>
+      <mat-list-item>
+        <a routerLink="/runs" routerLinkActive="active">Runs</a>
+      </mat-list-item>
+      <mat-list-item>
+        <a routerLink="/stats" routerLinkActive="active">Stats</a>
+      </mat-list-item>
+      <mat-list-item>
+        <a routerLink="/topten" routerLinkActive="active">Top 10</a>
+      </mat-list-item>
+    </mat-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    Ciao
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

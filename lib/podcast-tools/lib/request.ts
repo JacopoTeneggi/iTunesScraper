@@ -1,15 +1,14 @@
-import { HttpClient, HttpClientResponse, HttpCodes } from "typed-rest-client/HttpClient";
-import { json } from "body-parser";
+import { HttpClient, HttpClientResponse } from "typed-rest-client/HttpClient";
 
 let httpc: HttpClient = new HttpClient("itunes-scraper");
 
 export interface GenericHTTPResponse {
-    statusCode: number;
-    res: HttpClientResponse,
-    body: any
+    statusCode?: number;
+    res?: HttpClientResponse,
+    body?: any
 }
 
-export const request = async (url: string): Promise<GenericHTTPResponse> => {
+export async function request(url: string): Promise<GenericHTTPResponse> {
     return new Promise((resolve, reject) => {
         httpc.get(url)
             .then(res => {

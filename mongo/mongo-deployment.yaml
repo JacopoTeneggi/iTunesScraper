@@ -12,7 +12,7 @@ spec:
   selector:
     app: itunes-scraper
     tier: mongo
-  type: LoadBalancer
+  type: NodePort
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -55,8 +55,8 @@ spec:
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mongo-password
-                  key: password
+                  name: itunes-scraper-secrets
+                  key: mongo-password
             - name: MONGO_INITDB_DATABASE
               value: "podcasts"
           ports:

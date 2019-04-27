@@ -15,4 +15,4 @@ CREATE TABLE podcasts (
     trackcount bigint,
     hostingvendors text[]
 );
-COPY podcasts(itunesid) FROM '/docker-entrypoint-initdb.d/data.csv' DELIMITER ',' CSV HEADER;
+COPY podcasts(itunesid) FROM '/docker-entrypoint-initdb.d/ids.csv' DELIMITER ',' CSV HEADER;

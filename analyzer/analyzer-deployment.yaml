@@ -11,38 +11,43 @@ spec:
     controller-uid: itunes-scraper-analyzer
   type: LoadBalancer
 ---
-apiVersion: batch/v1 # for versions before 1.9.0 use apps/v1beta2
-kind: Job
+apiVersion: batch/v1beta1 # for versions before 1.9.0 use apps/v1beta2
+kind: CronJob
 metadata:
   name: itunes-scraper-analyzer
-  labels:
-    controller-uid: itunes-scraper-analyzer
 spec:
-  manualSelector: true
-  selector:
-    matchLabels:
-      controller-uid: itunes-scraper-analyzer
-  template:
-    metadata:
-      labels:
-        controller-uid: itunes-scraper-analyzer
+  schedule: "*/1 * * * *"
+  jobTemplate:
     spec:
-      containers:
-      - name: itunes-scraper-analyzer
-        image: itunes-scraper-analyzer:latest
-        command: ["node", "server.js"]
-        imagePullPolicy: Never
-        env:
-        - name: POSTGRES_DB_HOST
-          value: itunes-scraper-psql
-        - name: POSTGRES_USER
-          value: "podcasts"
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: psql-pass
-              key: password
-        ports:
-        - containerPort: 3000
-          name: analyzer
-      restartPolicy: Never
+      template:
+        spec:
+          containers:
+          - name: itunes-scraper-analyzer
+            image: itunes-scraper-analyzer:latest
+            command: ["node", "server.js"]
+            imagePullPolicy: Never
+            env:
+            - name: MONGO_HOST
+              value: itunes-scraper-mongo
+            - name: MONGO_USER
+              value: podcasts
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-pass
+                  key: pass
+            - name: POSTGRES_DB_HOST
+              value: itunes-scraper-psql
+            - name: POSTGRES_DB_NAME
+              value: podcasts
+            - name: POSTGRES_USER
+              value: podcasts
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: psql-pass
+                  key: password
+            ports:
+            - containerPort: 3000
+              name: analyzer
+          restartPolicy: OnFailure

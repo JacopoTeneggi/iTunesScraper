@@ -1,0 +1,30 @@
+{
+  "name": "itunes-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build-psql": "cd psql/ && eval $(minikube docker-env) && docker build -t itunes-scraper-psql .",
+    "build-mongo": "cd mongo/ && eval $(minikube docker-env) && docker build -t itunes-scraper-mongo .",
+    "start-db": "npm run build-mongo && npm run build-psql && kubectl apply -f mongo/mongo-deployment.yaml && kubectl apply -f psql/psql-deployment.yaml",
+    "build-web": "eval $(minikube docker-env) && docker build -t itunes-scraper-web -f web/Dockerfile .",
+    "build-analyzer": "docker build -t itunes-scraper-analyzer -f analyzer/Dockerfile .",
+    "build-backend": "docker buils -t itunes-scraper-backend -f backend/Dockerfile .",
+    "deploy-backend": "eval $(minikube docker-env) && uuid=$(uuidgen) && tag=\"itunes-scraper-backend:${uuid}\" && docker build -t $tag -f backend/Dockerfile . && kubectl apply -f ./backend/backend-deployment.yaml && kubectl set image deployment.v1.apps/itunes-scraper-backend backend=$tag",
+    "deploy-web": "eval $(minikube docker-env) && uuid=$(uuidgen) && tag=\"itunes-scraper-web:${uuid}\" && docker build -t $tag -f web/Dockerfile . && kubectl apply -f ./web/web-deployment.yaml && kubectl set image deployment.v1.apps/itunes-scraper-web web=$tag",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JacopoTeneggi/iTunesScraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JacopoTeneggi/iTunesScraper/issues"
+  },
+  "homepage": "https://github.com/JacopoTeneggi/iTunesScraper#readme"
+}
