@@ -1,0 +1,14 @@
+<mat-accordion>
+    <mat-expansion-panel *ngFor="let run of runs">
+        <mat-expansion-panel-header>
+            <mat-panel-title>Esecuzione analyzer</mat-panel-title>
+            <mat-panel-description>{{run._id}}</mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <mat-nav-list>
+            <mat-list-item *ngFor="let batch of run.batches">
+                <a>{{batch._batchId}}</a>
+            </mat-list-item>
+        </mat-nav-list>
+    </mat-expansion-panel>
+</mat-accordion>

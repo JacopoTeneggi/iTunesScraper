@@ -1,0 +1,32 @@
+{
+  "name": "@itunes-scraper-sdk/mongo-connector",
+  "version": "0.0.2-alpha.0",
+  "description": "> TODO: description",
+  "author": "Jacopo Teneggi <jacopoteneggi@live.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/mongo-connector.js",
+  "typings": "lib/mongo-connector.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "tsc": "tsc",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@itunes-scraper-sdk/psql-connector": "^0.0.2-alpha.0",
+    "@types/node": "^11.13.8",
+    "dotenv": "^7.0.0",
+    "mongodb": "^3.2.3"
+  },
+  "gitHead": "9c4e2c6aeb20e3dc7f1dcb4d16b9394dc1291671",
+  "devDependencies": {
+    "@types/mongodb": "^3.1.25",
+    "@types/node": "^11.13.8"
+  }
+}
