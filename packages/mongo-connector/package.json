@@ -1,11 +1,12 @@
 {
-  "name": "mongo-connector",
+  "name": "@itunes-scraper-sdk/mongo-connector",
   "version": "0.0.1-alpha.0",
   "description": "> TODO: description",
   "author": "Jacopo Teneggi <jacopoteneggi@live.com>",
   "homepage": "",
   "license": "ISC",
   "main": "lib/mongo-connector.js",
+  "typings": "lib/mongo-connector.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

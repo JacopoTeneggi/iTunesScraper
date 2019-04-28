@@ -1,0 +1,32 @@
+{
+  "name": "@itunes-scraper-sdk/podcast-tools",
+  "version": "0.0.1-alpha.0",
+  "description": "> TODO: description",
+  "author": "Jacopo Teneggi <jacopoteneggi@live.com>",
+  "homepage": "https://github.com/JacopoTeneggi/itunes-scraper#readme",
+  "license": "ISC",
+  "main": "lib/podcast-tools.js",
+  "typings": "lib/podcast-tools.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JacopoTeneggi/itunes-scraper.git"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/JacopoTeneggi/itunes-scraper/issues"
+  },
+  "dependencies": {
+    "@itunes-scraper-sdk/psql-connector": "^0.0.1-alpha.0",
+    "typed-rest-client": "^1.2.0"
+  }
+}

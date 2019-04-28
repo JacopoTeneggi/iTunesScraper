@@ -6,6 +6,7 @@
   "homepage": "",
   "license": "ISC",
   "main": "lib/psql-connector.js",
+  "typings": "lib/psql-connector.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -19,5 +20,6 @@
   },
   "dependencies": {
     "pg": "^7.10.0"
-  }
+  },
+  "gitHead": "02ed579ab9d70b59fa03a22b417f654b67b32442"
 }
