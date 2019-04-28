@@ -1,12 +1,11 @@
 {
-  "name": "@itunes-scraper-sdk/mongo-connector",
+  "private": true,
+  "name": "psql",
   "version": "0.0.2-alpha.0",
   "description": "> TODO: description",
   "author": "Jacopo Teneggi <jacopoteneggi@live.com>",
-  "homepage": "",
+  "homepage": "https://github.com/JacopoTeneggi/itunes-scraper#readme",
   "license": "ISC",
-  "main": "lib/mongo-connector.js",
-  "typings": "lib/mongo-connector.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -14,18 +13,22 @@
   "files": [
     "lib"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JacopoTeneggi/itunes-scraper.git"
+  },
   "scripts": {
-    "tsc": "tsc",
+    "deploy": "docker build -t itunes-scraper-psql . && kubectl apply -f psql-deployment.yaml",
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/JacopoTeneggi/itunes-scraper/issues"
   },
   "dependencies": {
     "@itunes-scraper-sdk/psql-connector": "^0.0.2-alpha.0",
-    "@types/node": "^11.13.8",
-    "mongodb": "^3.2.3"
+    "@types/node": "^11.13.8"
   },
-  "gitHead": "9c4e2c6aeb20e3dc7f1dcb4d16b9394dc1291671",
   "devDependencies": {
-    "@types/mongodb": "^3.1.25",
     "@types/node": "^11.13.8"
   }
 }

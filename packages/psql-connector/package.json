@@ -19,7 +19,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@types/node": "^11.13.8",
     "pg": "^7.10.0"
   },
-  "gitHead": "02ed579ab9d70b59fa03a22b417f654b67b32442"
+  "gitHead": "9c4e2c6aeb20e3dc7f1dcb4d16b9394dc1291671",
+  "devDependencies": {
+    "@types/node": "^11.13.8"
+  }
 }

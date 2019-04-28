@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: itunes-scraper-worker
+spec:
+  schedule: "30 8 * * *"
+  jobTemplate:
+    spec:
+      parallelism: 10
+      template:
+        spec:
+          containers:
+          - name: itunes-scraper-worker
+            image: itunes-scraper-worker
+            imagePullPolicy: Never
+            env:
+            - name: POSTGRES_DB_HOST
+              value: itunes-scraper-psql
+            - name: POSTGRES_USER
+              value: podcasts
+            - name: POSTGRES_PASSWORD
+              value: "1234"
+            - name: POSTGRES_DB_NAME
+              value: podcasts
+            - name: MONGO_HOST
+              value: itunes-scraper-mongo
+            - name: MONGO_USER
+              value: podcasts
+            - name: MONGO_PASSWORD
+              value: "1234"
+            - name: REDIS_HOST
+              value: itunes-scraper-redis
+            - name: MAIN_Q_NAME
+              value: itunes-scraper-wq
+          restartPolicy: OnFailure

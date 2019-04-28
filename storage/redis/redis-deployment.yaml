@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: itunes-scraper-redis
+  labels:
+    app: itunes-scraper
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: itunes-scraper
+    tier: redis
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: itunes-scraper-redis
+spec:
+  selector:
+    matchLabels:
+        app: itunes-scraper
+        tier: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: itunes-scraper
+        tier: redis
+    spec:
+      containers:
+        - name: itunes-scraper-redis-master
+          image: redis
+          env:
+            - name: MASTER
+              value: "true"
+          ports:
+            - containerPort: 6379

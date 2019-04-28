@@ -1,12 +1,11 @@
 {
-  "name": "@itunes-scraper-sdk/podcast-tools",
+  "private": true,
+  "name": "worker",
   "version": "0.0.2-alpha.0",
   "description": "> TODO: description",
   "author": "Jacopo Teneggi <jacopoteneggi@live.com>",
   "homepage": "https://github.com/JacopoTeneggi/itunes-scraper#readme",
   "license": "ISC",
-  "main": "lib/podcast-tools.js",
-  "typings": "lib/podcast-tools.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -19,6 +18,7 @@
     "url": "git+https://github.com/JacopoTeneggi/itunes-scraper.git"
   },
   "scripts": {
+    "deploy": "npm install && docker build -t itunes-scraper-worker . && kubectl apply -f worker-deployment.yaml",
     "tsc": "tsc",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
@@ -26,12 +26,16 @@
     "url": "https://github.com/JacopoTeneggi/itunes-scraper/issues"
   },
   "dependencies": {
+    "@itunes-scraper-sdk/mongo-connector": "^0.0.2-alpha.0",
+    "@itunes-scraper-sdk/podcast-tools": "^0.0.2-alpha.0",
     "@itunes-scraper-sdk/psql-connector": "^0.0.2-alpha.0",
     "@types/node": "^11.13.8",
-    "typed-rest-client": "^1.2.0"
+    "dotenv": "^7.0.0",
+    "redis": "^2.8.0",
+    "uuid": "^3.3.2"
   },
-  "gitHead": "9c4e2c6aeb20e3dc7f1dcb4d16b9394dc1291671",
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
     "@types/node": "^11.13.8"
   }
 }
