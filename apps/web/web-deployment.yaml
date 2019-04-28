@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: itunes-scraper-web
+  labels:
+    app: itunes-scraper
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 4200
+      targetPort: 80
+  selector:
+    app: itunes-scraper
+    tier: web
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: itunes-scraper-web
+spec:
+  selector:
+    matchLabels:
+      app: itunes-scraper
+      tier: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: itunes-scraper
+        tier: web
+    spec:
+      containers:
+        - image: itunes-scraper-web
+          imagePullPolicy: Never
+          name: web
+          ports:
+            - containerPort: 80
+              name: web

@@ -19,7 +19,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@itunes-scraper-sdk/mongo-connector": "^0.0.2-alpha.0",
     "@types/node": "^11.13.8",
+    "dotenv": "^7.0.0",
     "pg": "^7.10.0"
   },
   "gitHead": "9c4e2c6aeb20e3dc7f1dcb4d16b9394dc1291671",

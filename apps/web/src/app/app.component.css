@@ -1,0 +1,9 @@
+mat-sidenav-container {
+    display: block;
+    height: 100%;
+}
+
+mat-sidenav-content {
+    display: block;
+    margin-top: 16px;
+}
