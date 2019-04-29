@@ -66,6 +66,122 @@ storage/
 package.json
 lerna.json
 </div></code></pre>
+<h3 id="storage"><code>STORAGE</code></h3>
+<ol>
+<li>
+<p><strong>PostgreSQL</strong> | A PostgreSQL database instance stores podcast data. It contains two different tables:</p>
+<pre><code class="language-BASH"><div>podcasts=<span class="hljs-comment"># \d+ podcasts;</span>
+
+<span class="hljs-comment"># Table `podcasts` stores the IDs to track, general information about each podcast, and an array of hosting services for the episodes of each podcast.</span>
+
+Table <span class="hljs-string">"public.podcasts"</span>
+|     Column     |           Type           |
+|----------------+--------------------------|
+| itunesid       | bigint                   |
+| feeddown       | boolean                  |
+| title          | text                     |
+| authorname     | text                     |
+| feedurl        | text                     |
+| releasedate    | timestamp with time zone |
+| lastupdate     | timestamp with time zone |
+| genreids       | bigint[]                 |
+| country        | text                     |
+| trackcount     | bigint                   |
+| hostingvendors | text[]                   |
+
+podcasts=<span class="hljs-comment"># \d+ genres</span>
+
+<span class="hljs-comment"># Table `genres` stores the IDs for each genre identified by iTunes.</span>
+
+Table <span class="hljs-string">"public.genres"</span>
+| Column |  Type  |
+|--------+--------|
+| id     | bigint |
+| name   | text   |
+</div></code></pre>
+</li>
+<li>
+<p><strong>MongoDB</strong> | A MongoDB instance stores unstructured data about each update cycle in the <code>run-data</code> collection. Each document is structured like this:</p>
+<pre><code class="language-JS"><div>{
+    <span class="hljs-comment">// the id of the document</span>
+    <span class="hljs-string">"_id"</span>: <span class="hljs-string">"5cc5dd5c7cafa62fa853b492"</span>,
+    <span class="hljs-comment">// the id of the worker that executed the last update cycle on this podcast</span>
+    <span class="hljs-string">"workerID"</span>: <span class="hljs-string">"d140f0d0-69d7-11e9-b7f5-5d6dd4b509fb"</span>,
+    <span class="hljs-comment">// the id of the batch the podcast was in</span>
+    <span class="hljs-string">"batchID"</span>: <span class="hljs-string">"6c57e43848eb9b9d53100f1597c32d0eaaaf3c702c84fb3392df514cd0c9b1bc"</span>,
+    <span class="hljs-comment">// wether the cycle was completed successfully</span>
+    <span class="hljs-string">"success"</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-comment">// wether the podcast is offline</span>
+    <span class="hljs-string">"isDown"</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-comment">// the id of the podcast in the iTunes registry</span>
+    <span class="hljs-string">"itunesid"</span>: <span class="hljs-number">138121654</span>,
+    <span class="hljs-comment">// title of the podcast</span>
+    <span class="hljs-string">"title"</span>: <span class="hljs-string">"Plagued By Rhythm"</span>,
+    <span class="hljs-comment">// author of the podcast</span>
+    <span class="hljs-string">"author"</span>: <span class="hljs-string">"DJ I.Z."</span>,
+    <span class="hljs-comment">// feed of the podcast</span>
+    <span class="hljs-string">"feedUrl"</span>: <span class="hljs-string">"http://feeds.feedburner.com/PlaguedByRhyhtm"</span>,
+    <span class="hljs-comment">// this array contains metadata about the steps of the update cycle of the podcast</span>
+    <span class="hljs-string">"steps"</span>: [
+        {
+            <span class="hljs-comment">// when was the update cycle started</span>
+            <span class="hljs-string">"name"</span>: <span class="hljs-string">"start"</span>,
+            <span class="hljs-string">"endTime"</span>: <span class="hljs-number">1556471126137</span>,
+            <span class="hljs-string">"status"</span>: <span class="hljs-string">"SUCCEDED"</span>
+        },
+        {
+            <span class="hljs-comment">// lookup from the iTunes registry</span>
+            <span class="hljs-string">"name"</span>: <span class="hljs-string">"init"</span>,
+            <span class="hljs-string">"endTime"</span>: <span class="hljs-number">1556471126575</span>,
+            <span class="hljs-string">"status"</span>: <span class="hljs-string">"SUCCEDED"</span>
+        },
+        {
+            <span class="hljs-comment">// feed analysis and hosting vendors extracting</span>
+            <span class="hljs-string">"name"</span>: <span class="hljs-string">"extractHostings"</span>,
+            <span class="hljs-string">"endTime"</span>: <span class="hljs-number">1556471127222</span>,
+            <span class="hljs-string">"status"</span>: <span class="hljs-string">"SUCCEDED"</span>
+        },
+        {
+            <span class="hljs-comment">// psql entry update</span>
+            <span class="hljs-string">"name"</span>: <span class="hljs-string">"loadPodcast"</span>,
+            <span class="hljs-string">"endTime"</span>: <span class="hljs-number">1556471132150</span>,
+            <span class="hljs-string">"status"</span>: <span class="hljs-string">"SUCCEDED"</span>
+        }
+    ]
+}
+</div></code></pre>
+</li>
+<li>
+<p><strong>Redis</strong> | A redis instance that manages the update queue, the processing queue, and the leases for each item in the queue. More detailed information in the <code>update</code> section.</p>
+</li>
+</ol>
+<h3 id="apps"><code>APPS</code></h3>
+<ol>
+<li>
+<p><strong>Backend</strong> | A Node.js Express server to expose data from both the <code>psql</code> and <code>mongo</code> storage instances.</p>
+</li>
+<li>
+<p><strong>Filler</strong> | A Node.js script that queries the <code>psql</code> storage instance and gets the IDs of the iTunes podcasts to update, subdivides them in batches of 100 IDs, and pushes each batch in the update queue of the <code>redis</code> instance. This script is wrapped in a Kubernetes CronJob to run everyday at 8AM.</p>
+</li>
+<li>
+<p><strong>Web</strong> | An Angular webapp to browse the scraper results. This only connects to the backend.</p>
+</li>
+<li>
+<p><strong>Worker</strong> | A Node.js script that keeps taking and analyzing one element from the update queue of the <code>redis</code> instance at a time, until the queue is empty. This script is wrapped in a Kubernetes CronJob to run everyday at 8:30AM (when the <code>filler</code> is done). This CronJob has a <code>parallelism: 10</code> property to scale the number of workers active at the same time.</p>
+</li>
+</ol>
+<h3 id="packages"><code>PACKAGES</code></h3>
+<ol>
+<li>
+<p><strong>mongo-connector</strong> | A package published at <code>@itunes-scraper-sdk/mongo-connector</code> shared between the project packages to handle env variables and methods to connect to the <code>mongo</code> storage.</p>
+</li>
+<li>
+<p><strong>podcast-tools</strong> | A package published at <code>@itunes-scraper-sdk/podcast-tools</code> shared between the project packages to handle the upload cycle process and connect to the iTunes API.</p>
+</li>
+<li>
+<p><strong>psql-connector</strong> | A package published at <code>@itunes-scraper-sdk/psql-connector</code> shared between the project packages to handle env vatiables and methos to connect to the <code>psql</code> storage.</p>
+</li>
+</ol>
 <h2 id="quickstart"><code>QUICKSTART</code></h2>
 <ol>
 <li>
@@ -77,8 +193,7 @@ lerna.json
 <li>
 <p><code>➜ lerna bootstrap</code>
 This command install dependencies for each package inside the repo, the output you should expect is:</p>
-<pre><code class="language-BASH"><div>...
-
+<pre><code class="language-BASH"><div>[...]
 lerna info Bootstrapping 10 packages
 lerna info Installing external dependencies
 lerna info Symlinking packages and binaries
@@ -88,10 +203,11 @@ lerna success Bootstrapped 10 packages
 <li>
 <p><code>➜ lerna run deploy</code> (this is gonna take a while)</p>
 <blockquote>
-<p><strong>N.B you have to add your own <code>ids.csv</code> file in <code>storage/psql/</code> containing the ids of the iTunes entry you wanna track</strong></p>
+<p><strong>N.B you have to add your own <code>ids.csv</code> file in <code>storage/psql/</code> containing the ids of the iTunes entry you wanna track! You can find a placeholder for explicative purposes</strong></p>
 </blockquote>
 <p>This is the output you should expect:</p>
-<pre><code class="language-BASH"><div>lerna success run Ran npm script <span class="hljs-string">'deploy'</span> <span class="hljs-keyword">in</span> 7 packages <span class="hljs-keyword">in</span> 22.0s:
+<pre><code class="language-BASH"><div>[...]
+lerna success run Ran npm script <span class="hljs-string">'deploy'</span> <span class="hljs-keyword">in</span> 7 packages <span class="hljs-keyword">in</span> 22.0s:
 lerna success - backend
 lerna success - filler
 lerna success - web
@@ -102,7 +218,51 @@ lerna success - redis
 </div></code></pre>
 </li>
 </ol>
-<p>Done!</p>
+<p>Done!
+Everyday at 8AM the <code>filler</code> will create an update queue, and at 8:30AM many <code>worker</code>s will be created to consume that queue.
+You can now connect to <code>localhost:4200</code> to acces the webapp. At first, no data should be displayed because each deploy is brand new.</p>
+<h3 id="health-checks"><code>HEALTH CHECKS</code></h3>
+<ol>
+<li>
+<pre><code class="language-BASH"><div>➜ kubectl get services -l app=itunes-scraper
+
+NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
+itunes-scraper-analyzer   LoadBalancer   10.98.58.62     localhost     3000:31392/TCP    ***
+itunes-scraper-backend    LoadBalancer   10.103.107.85   localhost     3003:32336/TCP    ***
+itunes-scraper-mongo      LoadBalancer   10.96.16.45     localhost     27017:30813/TCP   ***
+itunes-scraper-psql       LoadBalancer   10.111.105.63   localhost     5432:31569/TCP    ***
+itunes-scraper-redis      LoadBalancer   10.99.172.171   localhost     6379:32066/TCP    ***
+itunes-scraper-web        LoadBalancer   10.109.60.26    localhost     4200:30845/TCP    ***
+</div></code></pre>
+</li>
+<li>
+<pre><code class="language-BASH"><div>➜ kubectl get pvc -l app=itunes-scraper
+
+NAME             STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mongo-pv-claim   Bound     pvc-f364bca4-5301-11e9-bead-025000000001   2Gi        RWO            hostpath       ***
+psql-pv-claim    Bound     pvc-9dba158b-4fa6-11e9-8b25-025000000001   2Gi        RWO            hostpath       ***
+</div></code></pre>
+</li>
+<li>
+<pre><code class="language-BASH"><div>➜ kubectl get pods -l app=itunes-scraper
+
+NAME                                    READY     STATUS    RESTARTS   AGE
+itunes-scraper-backend-84f774fc-dn9nr   1/1       Running   0          ***
+itunes-scraper-mongo-c68659f7c-dxcj8    1/1       Running   0          ***
+itunes-scraper-psql-855fb9c756-vrxk7    1/1       Running   0          ***
+itunes-scraper-redis-84c44d7794-td4s8   1/1       Running   0          ***
+itunes-scraper-web-794b5b6b46-txhgm     1/1       Running   0          ***
+</div></code></pre>
+</li>
+<li>
+<pre><code class="language-BASH"><div>➜ kubectl get cronjobs
+
+NAME                      SCHEDULE      SUSPEND   ACTIVE    LAST SCHEDULE   AGE
+itunes-scraper-filler     0 8 * * *     False     0         12h             ***
+itunes-scraper-worker     30 8 * * *    False     1         11h             ***
+</div></code></pre>
+</li>
+</ol>
 
     </body>
     </html>
