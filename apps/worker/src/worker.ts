@@ -62,10 +62,9 @@ function uploadRecord(state: podcast.State, success: boolean, key: string) {
 
 function analyze(item: string) {
     const key = itemKey(item);
-    console.log(key);
     return Promise.all(
         item.split(",")
-            .map(string => +string)
+            .map(string => { console.log(+string); return +string })
             .map(podcast.update)
             .map(promise => promise
                 .then(state => uploadRecord(state, true, key))

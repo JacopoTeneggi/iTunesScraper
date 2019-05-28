@@ -4,5 +4,7 @@
   "devDependencies": {
     "lerna": "^3.13.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@itunes-scraper-sdk/podcast-tools": "0.0.2-alpha.0"
+  }
 }

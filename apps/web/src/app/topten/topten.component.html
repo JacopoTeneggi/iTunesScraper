@@ -1,3 +1,5 @@
-<p>
-  topten works!
-</p>
+<mat-nav-list>
+  <mat-list-item *ngFor="let vendor of topten; let i = index">
+    <a>{{i + 1}}. {{vendor.hostingvendors}} <strong>{{vendor.count}}</strong></a>
+  </mat-list-item>
+</mat-nav-list>

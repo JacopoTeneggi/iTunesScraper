@@ -10,7 +10,7 @@ const lremAsync = promisify(redisClient.lrem).bind(redisClient);
 
 const mainQName = process.env.MAIN_Q_NAME;
 
-psql.query("SELECT itunesid FROM podcasts WHERE lastupdate < current_date - 30 or lastupdate is null;")
+psql.query("SELECT itunesid FROM podcasts WHERE lastupdate < current_date - 30 or lastupdate is null ORDER BY itunesid;")
     .then(queryResults => {
         const batches: any[][] = [];
         const count = queryResults.rowCount;

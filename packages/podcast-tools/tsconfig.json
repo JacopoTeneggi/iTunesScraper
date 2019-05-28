@@ -12,6 +12,7 @@
         "lib": [
             "es6"
         ],
+        "outDir": "lib",
         "resolveJsonModule": true
     },
     "include": [

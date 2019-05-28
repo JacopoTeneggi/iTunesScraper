@@ -5,6 +5,7 @@ import { retry, catchError } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { Run } from './runs/runs.component';
 import { VendorCount } from './topten/topten.component';
+import { Stats } from './stats/stats.component';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,13 @@ export class RestService {
     // return an observable with a user-facing error message
     return throwError(
       'Something bad happened; please try again later.');
+  }
+
+  public getStats() {
+    return this.http.get<Stats>(`${this.apiUrl}/stats`, { observe: 'response' })
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 
   public getTopTen() {

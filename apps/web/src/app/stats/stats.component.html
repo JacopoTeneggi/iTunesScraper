@@ -1,3 +1,13 @@
-<p>
-  stats works!
-</p>
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let stat of stats | keyvalue">
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{stat.key}}</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-nav-list>
+      <mat-list-item *ngFor="let data of stat.value[0] | keyvalue">
+        <a>{{data.key}} : {{data.value}}</a>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-expansion-panel>
+</mat-accordion>

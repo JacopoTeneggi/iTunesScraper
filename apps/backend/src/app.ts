@@ -73,10 +73,14 @@ app.get("/runs", (_: Request, res: Response) => {
                             }
                         }
                     }
-                }], (err, cursor: AggregationCursor<any>) => {
-                    if (err) reject(err);
-                    resolve(cursor.toArray());
-                })
+                }],
+            {
+                'allowDiskUse': true,
+            },
+            (err, cursor: AggregationCursor<any>) => {
+                if (err) reject(err);
+                resolve(cursor.toArray());
+            })
     }))
         .then(documents => { res.status(200).send(documents) })
         .catch(reason => { res.status(500).send(reason) })

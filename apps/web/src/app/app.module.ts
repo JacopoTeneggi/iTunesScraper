@@ -15,7 +15,7 @@ const appRoutes: Routes = [
   { path: 'stats', component: StatsComponent },
   { path: 'runs', component: RunsComponent },
   { path: 'topten', component: ToptenComponent},
-  { path: '', redirectTo: '/runs', pathMatch: 'full' }
+  { path: '', redirectTo: '/topten', pathMatch: 'full' }
 ];
 
 @NgModule({

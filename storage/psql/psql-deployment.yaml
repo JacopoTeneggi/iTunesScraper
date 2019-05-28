@@ -54,13 +54,16 @@ spec:
               value: podcasts
             - name: POSTGRES_PASSWORD
               value: "1234"
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
               name: psql
           volumeMounts:
             - name: psql-persistent-storage
-              mountPath: /var/lib/psql
+              mountPath: /var/lib/postgresql/data/
       volumes:
         - name: psql-persistent-storage
-          persistentVolumeClaim:
-            claimName: psql-pv-claim
+          hostPath:
+            path: /data/itunes-scraper/psql/
+            type: Directory

@@ -61,8 +61,8 @@ spec:
               name: mongo
           volumeMounts:
             - name: mongo-persistent-storage
-              mountPath: /var/lib/mongo
+              mountPath: /data/db
       volumes:
         - name: mongo-persistent-storage
-          persistentVolumeClaim:
-            claimName: mongo-pv-claim
+          hostPath:
+            path: /data/itunes-scraper/mongo/
